@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New IT Asset</h2>
+
+    <!-- Form for adding a new asset -->
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Asset Name</label>
+            <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_serial_number" class="form-label">Serial Number</label>
+            <input type="text" class="form-control" id="id_serial_number" name="serial_number" value="{{ form.serial_number.value }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_manufacturer" class="form-label">Manufacturer</label>
+            <select class="form-select" id="id_manufacturer" name="manufacturer" required>
+                {% for manufacturer in manufacturers %}
+                <option value="{{ manufacturer.id }}" {% if manufacturer.id == form.manufacturer.value %} selected {% endif %}>{{ manufacturer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_purchase_date" class="form-label">Purchase Date</label>
+            <input type="date" class="form-control" id="id_purchase_date" name="purchase_date" value="{{ form.purchase_date.value }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_assigned_to" class="form-label">Assigned To</label>
+            <select class="form-select" id="id_assigned_to" name="assigned_to" required>
+                {% for employee in employees %}
+                <option value="{{ employee.id }}" {% if employee.id == form.assigned_to.value %} selected {% endif %}>
+                    {{ employee.user.get_full_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Asset</button>
+        <a href="{% url 'asset_list' %}" class="btn btn-secondary">Cancel</a>
+        <p>Assigned To Value: {{ form.assigned_to.value }}</p>
+    </form>

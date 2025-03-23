@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>User Profile</h2>
+
+<table>
+    <tr>
+        <th>First Name:</th>
+        <td>{{ user.first_name }}</td>
+    </tr>
+    <tr>
+        <th>Last Name:</th>
+        <td>{{ user.last_name }}</td>
+    </tr>
+    <tr>
+        <th>Email:</th>
+        <td>{{ user.email }}</td>
+    </tr>
+    <tr>
+        <th>Username:</th>
+        <td>{{ user.username }}</td>
+    </tr>
+    <tr>
+        <th>Phone Number:</th>
+        <td>{{ profile.phone_number }}</td>
+    </tr>
+    <tr>
+        <th>Office:</th>
+        <td>{{ profile.address }}</td>
+    </tr>
+</table>
+
+<!-- Edit Profile Button -->
+<a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Details</a>
+
+{% endblock %}

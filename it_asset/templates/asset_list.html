@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>IT Asset List</h2>
+    
+    <!-- Add Asset Button -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssetModal">
+        Add Asset
+    </button>
+
+    <!-- Table to display assets -->
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Serial Number</th>
+                <th>Manufacturer</th>
+                <th>Assigned To</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.serial_number }}</td>
+                <td>{{ asset.manufacturer.name }}</td>
+                <td>{{ asset.assigned_to.get_full_name|default:"Unassigned" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Asset Modal -->
+<div class="modal fade" id="addAssetModal" tabindex="-1" aria-labelledby="addAssetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAssetModalLabel">Add New Asset</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- The form posts to the add_asset URL. -->
+                <form method="POST" action="{% url 'add_asset' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label">Asset Name</label>
+                        <input type="text" class="form-control" id="id_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_serial_number" class="form-label">Serial Number</label>
+                        <input type="text" class="form-control" id="id_serial_number" name="serial_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_manufacturer" class="form-label">Manufacturer</label>
+                        <select class="form-select" id="id_manufacturer" name="manufacturer" required>
+                            {% for manufacturer in manufacturers %}
+                                <option value="{{ manufacturer.id }}">{{ manufacturer.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_assigned_to" class="form-label">Assigned To</label>
+                        <select class="form-select" id="id_assigned_to" name="assigned_to">
+                            <option value="">Unassigned</option>
+                            {% for employee in employees %}
+                                <option value="{{ employee.id }}">{{ employee.user.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Asset</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

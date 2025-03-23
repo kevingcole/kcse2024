@@ -5,6 +5,7 @@ from .forms import ITAssetForm, ManufacturerForm, EmployeeForm, CustomUserCreati
 from django.contrib.auth import login, get_user_model, logout, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.paginator import Paginator
 
 User = get_user_model()
 
@@ -23,16 +24,22 @@ def register(request):
         form = RegistrationForm()
     return render(request, "registration/register.html", {"form": form})
 
-# Asset List View
+# Asset List View with Pagination
 def asset_list(request):
     assets = Asset.objects.all()
+    paginator = Paginator(assets, 10)  # Show 10 assets per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     manufacturers = Manufacturer.objects.all()
     employees = Employee.objects.all()
+
     context = {
-        'assets': assets,
+        'page_obj': page_obj,
         'manufacturers': manufacturers,
         'employees': employees,
     }
+
     return render(request, 'assets/asset_list.html', context)
 
 # Add Asset View
@@ -68,7 +75,7 @@ def user_profile_view(request):
 
 # Home View
 def home(request):
-    return render(request, 'asset_list.html')
+    return render(request, 'home.html')
 
 # About View
 def about(request):
@@ -78,19 +85,18 @@ def about(request):
 def contact(request):
     return render(request, 'contact.html')
 
-# Asset Dashboard View (Optional)
+# Asset Dashboard View
 def asset_dashboard_view(request):
-    # Example: you might want to show asset statistics or an overview here
     asset_count = ITAsset.objects.count()
     manufacturer_count = Manufacturer.objects.count()
     employee_count = Employee.objects.count()
-    
+
     context = {
         'asset_count': asset_count,
         'manufacturer_count': manufacturer_count,
         'employee_count': employee_count,
     }
-    
+
     return render(request, 'asset_dashboard.html', context)
 
 # Profile Edit View
@@ -104,6 +110,7 @@ def profile_edit(request):
             return redirect('user_profile')
     else:
         form = ProfileForm(instance=request.user.profile)
+
     return render(request, 'profile/profile_edit.html', {'form': form})
 
 # Change Password View
@@ -118,6 +125,7 @@ def change_password(request):
             return redirect('user_profile')
     else:
         form = PasswordChangeForm(request.user)
+
     return render(request, 'registration/change_password.html', {'form': form})
 
 # Asset Update View
@@ -132,6 +140,7 @@ def asset_update(request, pk):
             return redirect('asset_list')
     else:
         form = ITAssetForm(instance=asset)
+
     return render(request, 'assets/asset_update.html', {'form': form})
 
 # Asset Delete View

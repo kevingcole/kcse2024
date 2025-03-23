@@ -1,6 +1,4 @@
-# it_asset/models.py
-
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -12,18 +10,35 @@ class CustomUser(AbstractUser):
     # Add custom fields if necessary
     pass
 
+# IT Asset Model
 class ITAsset(models.Model):
-    name = models.CharField(max_length=255)
-    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.CASCADE)
-    employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
-    # Add other fields as needed
+    def validate_purchase_date(value):
+        if value > timezone.now().date():
+            raise ValidationError("Purchase date cannot be in the future.")
+
+    name = models.CharField(max_length=100)
+    serial_number = models.CharField(max_length=100, unique=True)
+    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.SET_NULL, null=True, blank=True)
+    purchase_date = models.DateField(validators=[validate_purchase_date])
+    assigned_to = models.ForeignKey('Employee', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-class Manufacturer(models.Model):
+# Asset Model
+class Asset(models.Model):
+    # Add fields here
     name = models.CharField(max_length=255)
-    address = models.TextField()
+    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.CASCADE)
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+# Manufacturer Model
+class Manufacturer(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    website = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
@@ -61,48 +76,3 @@ def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
     except Profile.DoesNotExist:
         pass
-
-
-# Employee Model
-class Employee(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    department = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} - {self.position}"
-
-
-# Manufacturer Model
-class Manufacturer(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    website = models.URLField(blank=True)
-
-    def __str__(self):
-        return self.name
-
-
-# IT Asset Model
-class ITAsset(models.Model):
-    def validate_purchase_date(value):
-        if value > timezone.now().date():
-            raise ValidationError("Purchase date cannot be in the future.")
-
-    name = models.CharField(max_length=100)
-    serial_number = models.CharField(max_length=100, unique=True)
-    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.SET_NULL, null=True, blank=True)
-    purchase_date = models.DateField(validators=[validate_purchase_date])
-    assigned_to = models.ForeignKey('Employee', on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-
-# Asset Model (linked to ITAsset)
-class Asset(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    it_asset = models.OneToOneField('ITAsset', on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self):
-        return self.name

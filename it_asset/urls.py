@@ -10,9 +10,6 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
 
-    # Redirect from /accounts/profile to /profile
-    path('accounts/profile/', RedirectView.as_view(url='/profile/', permanent=True)),
-
     # Asset Management Dashboard
     path('asset-dashboard/', views.asset_dashboard_view, name='asset_dashboard'),
 

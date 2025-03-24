@@ -24,7 +24,7 @@ EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'it-assets-no-reply@kevcoleit.co.uk'
-EMAIL_HOST_PASSWORD = 'nnhcwsdqnlrgrccpcyllqrsdrgk'  # Ensure this is kept secure in production
+EMAIL_HOST_PASSWORD = 'REDACTED'  # Ensure this is kept secure in production
 DEFAULT_FROM_EMAIL = 'IT Asset System (Kev Cole IT)'
 
 # Quick-start development settings - unsuitable for production

@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os # Add this import
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Ensure that a user logout redirects back to the login screen.
-LOGOUT_REDIRECT_URL = '/accounts/login/'        # Redirects to login page after logout
+LOGOUT_REDIRECT_URL = '/'        # Redirects to login page after logout
 
 # Email settings
 MAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -36,8 +37,9 @@ SECRET_KEY = 'django-insecure-=6tbo_19&#vdzov0!o@_@4j&ja4kg+i3%(iqgi3z39&s!nw))@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []  # You can add allowed hosts if needed for deployment
+ALLOWED_HOSTS = ["*"]  # You can add allowed hosts if needed for deployment
 
+LOGIN_URL = '/accounts/login/'
 
 # Application definition
 
@@ -67,7 +69,7 @@ ROOT_URLCONF = 'it_asset_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Ensure this path includes the templates directory
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,7 +96,7 @@ DATABASES = {
 }
 
 # Custom Auth User Model
-AUTH_USER_MODEL = 'it_asset.CustomUser'  # This ensures that CustomUser is used
+AUTH_USER_MODEL = 'auth.user'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

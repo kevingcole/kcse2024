@@ -15,21 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from it_asset import views
 from django.urls import path, include
-  
+from it_asset import views as it_asset_views
+
 urlpatterns = [
-    path('', views.asset_list, name='asset_list'),
-    # path('asset/<int:pk>/', views.asset_detail, name='asset_detail'),
-    path('assets/<int:id>/', views.asset_detail, name='asset_detail'),
-    #path('asset/new/', views.asset_create, name='asset_create'),
-    #path('asset/<int:pk>/edit/', views.asset_update, name='asset_update'),
-    #path('asset/<int:pk>/delete/', views.asset_delete, name='asset_delete'),
-    path('accounts/', include('django.contrib.auth.urls')),  # Include the authentication URLs
-    path('register/', views.register, name='register'),  # Registration URL
-    path('', include('it_asset.urls')),  # Include your app's URLs
     path('admin/', admin.site.urls),
-    path('about/', views.about, name='about'),
-    path('profile/', views.Profile, name='profile'),
-    path('', include('it_asset.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/profile/', it_asset_views.user_profile, name='user_profile'),
+    path('register/', it_asset_views.register, name='register'),
+    path('', it_asset_views.asset_list, name='home'),  # Update this line to point to asset_list view
+    path('about/', it_asset_views.about, name='about'),
+    path('contact/', it_asset_views.contact, name='contact'),
+    path('asset-dashboard/', it_asset_views.asset_dashboard_view, name='asset_dashboard'),
+    path('profile/', it_asset_views.user_profile, name='user_profile'),
+    path('profile/edit/', it_asset_views.profile_edit, name='profile_edit'),
+    path('change-password/', it_asset_views.change_password, name='change_password'),
+    path('assets/', it_asset_views.asset_list, name='asset_list'),
+    path('assets/add/', it_asset_views.add_asset, name='add_asset'),
+    path('assets/<int:pk>/', it_asset_views.asset_detail, name='asset_detail'),
+    path('assets/<int:pk>/update/', it_asset_views.asset_update, name='asset_update'),
+    path('assets/<int:pk>/delete/', it_asset_views.asset_delete, name='asset_delete'),
 ]

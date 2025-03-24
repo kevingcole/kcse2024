@@ -3,6 +3,7 @@ from . import views
 from .views import user_profile_view
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
+from it_asset import views as it_asset_views
 
 urlpatterns = [
     # Homepage and Static Pages
@@ -19,17 +20,18 @@ urlpatterns = [
     path("change-password/", views.change_password, name="change_password"),
 
     # Asset Management
-    path("assets/<int:pk>/", views.asset_detail, name="asset_detail"),
+    path("assets/<int:pk>/", it_asset_views.asset_detail, name="asset_detail"),
     path('assets/', views.asset_list, name='asset_list'),
     path('assets/add/', views.add_asset, name='add_asset'),
     path("assets/<int:pk>/update/", views.asset_update, name="asset_update"),
     path("assets/<int:pk>/delete/", views.asset_delete, name="asset_delete"),
+    path('asset/<int:asset_id>/', views.asset_detail, name='asset_detail'),
 
     # Search (if needed)
     # path("search/", views.search, name="search"),
 
     # Authentication Views
-    path("accounts/logout/", auth_views.LogoutView.as_view(next_page='login'), name="logout"),
+    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.register, name="register"),
 
     # Include default Django auth URLs (login, logout, password management)

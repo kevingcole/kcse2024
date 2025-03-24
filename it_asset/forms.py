@@ -18,19 +18,24 @@ class BaseForm(forms.ModelForm):
 CustomUser = get_user_model()
 
 class ITAssetForm(BaseForm):
+    assigned_to = forms.ModelChoiceField(queryset=Employee.objects.all(), required=False, label="Assigned To")
+
     class Meta:
         model = ITAsset
-        fields = ['name', 'serial_number', 'manufacturer', 'purchase_date', 'assigned_to']
+        fields = ['name', 'serial_number', 'purchase_date', 'manufacturer', 'assigned_to', 'description', 'warranty_expiry']
         widgets = {
             'purchase_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['manufacturer'].queryset = Manufacturer.objects.all()  # Populate manufacturer dropdown
-        self.fields['assigned_to'].queryset = Employee.objects.all()  # Populate assigned_to dropdown
+        # Make sure the queryset for 'assigned_to' is set correctly
+        self.fields['manufacturer'].queryset = Manufacturer.objects.all()
+        self.fields['assigned_to'].queryset = Employee.objects.all()  # Populate with employees
 
-    # Example custom validation for serial number uniqueness
+        # Debugging: Check the queryset
+        print("Assigned To queryset:", self.fields['assigned_to'].queryset)
+
     def clean_serial_number(self):
         serial_number = self.cleaned_data.get("serial_number")
         if ITAsset.objects.filter(serial_number=serial_number).exists():
@@ -41,11 +46,7 @@ class ITAssetForm(BaseForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['phone_number', 'address']
-        widgets = {
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
-            'address': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = ['bio', 'location']
 
 # Custom user creation form
 class CustomUserCreationForm(UserCreationForm):

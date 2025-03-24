@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Add New IT Asset</h2>
+<!-- <div class="container mt-4"> -->
+    <h2>Add New IT Asset 123456</h2>
 
     <!-- Form for adding a new asset -->
-    <form method="POST">
+<!--     <form method="POST">
         {% csrf_token %}
         
         <div class="mb-3">
@@ -36,9 +36,7 @@
             <label for="id_assigned_to" class="form-label">Assigned To</label>
             <select class="form-select" id="id_assigned_to" name="assigned_to" required>
                 {% for employee in employees %}
-                <option value="{{ employee.id }}" {% if employee.id == form.assigned_to.value %} selected {% endif %}>
-                    {{ employee.user.get_full_name }}
-                </option>
+                <option value="{{ employee.id }}" {% if employee.id == form.assigned_to.value %} selected {% endif %}>{{ employee.user.get_full_name }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -46,4 +44,11 @@
         <button type="submit" class="btn btn-primary">Add Asset</button>
         <a href="{% url 'asset_list' %}" class="btn btn-secondary">Cancel</a>
         <p>Assigned To Value: {{ form.assigned_to.value }}</p>
-    </form>
+    </form> -->
+ <!-- add_asset.html -->
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+  
+    <button type="submit">Submit</button>
+  </form>

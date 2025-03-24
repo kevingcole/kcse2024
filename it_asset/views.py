@@ -1,13 +1,47 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import ITAsset, Manufacturer, Employee, Profile, Asset
-from .forms import ITAssetForm, ManufacturerForm, EmployeeForm, CustomUserCreationForm, RegistrationForm, ProfileForm
-from django.contrib.auth import login, get_user_model, logout, update_session_auth_hash
-from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
-from django.core.paginator import Paginator
+from .models import Profile
+from .forms import ProfileForm
 
-User = get_user_model()
+@login_required
+def profile_edit(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('user_profile')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'profile/profile_edit.html', {'form': form})
+
+from django.shortcuts import render
+from .models import ITAsset, Manufacturer, Employee
+
+def asset_list(request):
+    assets = ITAsset.objects.all()
+    manufacturers = Manufacturer.objects.all()
+    employees = Employee.objects.all()
+    context = {
+        'page_obj': assets,
+        'manufacturers': manufacturers,
+        'employees': employees,
+    }
+    return render(request, 'assets/asset_list.html', context)
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.core.paginator import Paginator
+from .models import ITAsset, Manufacturer, Employee
+from .forms import ITAssetForm, RegistrationForm, ProfileForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 # Registration View
 def register(request):
@@ -25,8 +59,9 @@ def register(request):
     return render(request, "registration/register.html", {"form": form})
 
 # Asset List View with Pagination
+@login_required
 def asset_list(request):
-    assets = Asset.objects.all()
+    assets = ITAsset.objects.all()
     paginator = Paginator(assets, 10)  # Show 10 assets per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -43,6 +78,7 @@ def asset_list(request):
     return render(request, 'assets/asset_list.html', context)
 
 # Add Asset View
+@login_required
 def add_asset(request):
     if request.method == 'POST':
         form = ITAssetForm(request.POST)
@@ -53,20 +89,22 @@ def add_asset(request):
     else:
         form = ITAssetForm()
 
-    manufacturers = Manufacturer.objects.all()
-    employees = Employee.objects.all()
-
-    return render(request, 'assets/add_asset.html', {
-        'form': form,
-        'manufacturers': manufacturers,
-        'employees': employees,
-    })
+    return render(request, 'assets/add_asset.html', {'form': form})
 
 # Asset Detail View
 @login_required
 def asset_detail(request, pk):
     asset = get_object_or_404(ITAsset, pk=pk)
-    return render(request, 'assets/asset_detail.html', {'asset': asset})
+    manufacturers = Manufacturer.objects.all()
+    employees = Employee.objects.all()
+
+    context = {
+        'asset': asset,
+        'manufacturers': manufacturers,
+        'employees': employees,
+    }
+
+    return render(request, 'assets/asset_detail.html', context)
 
 # User Profile View
 @login_required
@@ -74,6 +112,7 @@ def user_profile_view(request):
     return render(request, 'profile/user_profile.html', {'user': request.user})
 
 # Home View
+@login_required
 def home(request):
     return render(request, 'home.html')
 
@@ -86,6 +125,7 @@ def contact(request):
     return render(request, 'contact.html')
 
 # Asset Dashboard View
+@login_required
 def asset_dashboard_view(request):
     asset_count = ITAsset.objects.count()
     manufacturer_count = Manufacturer.objects.count()
@@ -102,14 +142,19 @@ def asset_dashboard_view(request):
 # Profile Edit View
 @login_required
 def profile_edit(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=request.user)
+
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=request.user.profile)
+        form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
             return redirect('user_profile')
     else:
-        form = ProfileForm(instance=request.user.profile)
+        form = ProfileForm(instance=profile)
 
     return render(request, 'profile/profile_edit.html', {'form': form})
 
@@ -152,3 +197,7 @@ def asset_delete(request, pk):
         messages.success(request, "Asset deleted successfully!")
         return redirect('asset_list')
     return render(request, 'assets/asset_delete.html', {'asset': asset})
+
+@login_required
+def user_profile(request):
+    return render(request, 'it_asset/user_profile.html')

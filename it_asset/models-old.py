@@ -86,7 +86,12 @@ class ITAsset(models.Model):
     serial_number = models.CharField(max_length=100, unique=True)
     manufacturer = models.ForeignKey('Manufacturer', on_delete=models.SET_NULL, null=True, blank=True)
     purchase_date = models.DateField(validators=[validate_purchase_date])
-    assigned_to = models.ForeignKey('Employee', on_delete=models.SET_NULL, null=True, blank=True)
+    from django.conf import settings
+from django.db import models
+
+class ITAsset(models.Model):
+    # other fields
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name

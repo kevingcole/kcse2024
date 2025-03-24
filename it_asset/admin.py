@@ -1,14 +1,14 @@
 # it_asset/admin.py
 
 from django.contrib import admin
-from .models import ITAsset, Manufacturer, Employee, CustomUser
+from .models import ITAsset, Manufacturer, Employee
 
 # Register models with the admin site
 admin.site.register(ITAsset)
 admin.site.register(Manufacturer)
 admin.site.register(Employee)
 
-# Register CustomUser only once
+""" # Register CustomUser only once
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
@@ -19,4 +19,4 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ['username', 'email']
 
 # Register CustomUser with its custom admin
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin) """

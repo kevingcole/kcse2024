@@ -6,8 +6,11 @@
 <div class="container mt-4">
     <h2>IT Assets</h2>
 
-    <!-- Button to trigger modal for adding a new asset -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addAssetModal">Add New Asset</button>
+    <!-- Buttons to trigger modals for adding a new asset and manufacturer -->
+    <div class="mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssetModal">Add New Asset</button>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addManufacturerModal">Add New Manufacturer</button>
+    </div>
 
     <!-- Asset List Table -->
     <table class="table table-striped table-hover">
@@ -81,6 +84,28 @@
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Asset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manufacturer Add Modal -->
+    <div class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addManufacturerModalLabel">Add New Manufacturer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'add_manufacturer' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Manufacturer Name</label>
+                            <input type="text" class="form-control" id="id_name" name="name" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Manufacturer</button>
                     </form>
                 </div>
             </div>

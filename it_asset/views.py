@@ -7,7 +7,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
 from .models import ITAsset, Manufacturer, Employee, Profile
-from .forms import ITAssetForm, RegistrationForm, ProfileForm, AssetForm
+from .forms import ITAssetForm, RegistrationForm, ProfileForm, AssetForm, ManufacturerForm
 
 # Registration View
 def register(request):
@@ -153,13 +153,13 @@ def asset_update(request, pk):
 
 # Asset Delete View
 @login_required
-def asset_delete(request, pk):
-    asset = get_object_or_404(ITAsset, pk=pk)
+def asset_delete(request, id):
+    asset = get_object_or_404(ITAsset, id=id)
     if request.method == 'POST':
         asset.delete()
         messages.success(request, "Asset deleted successfully!")
         return redirect('asset_list')
-    return render(request, 'assets/asset_delete.html', {'asset': asset})
+    return render(request, 'assets/asset_confirm_delete.html', {'asset': asset})
 
 # Logout View
 def logout_view(request):
@@ -171,3 +171,17 @@ def logout_view(request):
 @login_required
 def profile(request):
     return render(request, 'it_asset/profile.html')
+
+@login_required
+def add_manufacturer(request):
+    if request.method == 'POST':
+        form = ManufacturerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Manufacturer created successfully!")
+            return redirect('asset_list')
+        else:
+            messages.error(request, "Error creating manufacturer. Please check the form for errors.")
+    else:
+        form = ManufacturerForm()
+    return render(request, 'assets/add_manufacturer.html', {'form': form})

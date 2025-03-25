@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h2 class="display-5 text-center mb-4">Confirm Delete</h2>
+                    <p>Are you sure you want to delete the asset "{{ asset.name }}"?</p>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a href="{% url 'asset_detail' asset.id %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

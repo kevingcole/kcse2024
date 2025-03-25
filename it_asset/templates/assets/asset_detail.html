@@ -27,6 +27,31 @@
             <td>{{ asset.assigned_to.get_full_name }}</td>
         </tr>
     </table>
-    <a href="{% url 'asset_list' %}" class="btn btn-secondary">Back to Asset List</a>
+    <div class="d-flex justify-content-between">
+        <a href="{% url 'asset_list' %}" class="btn btn-secondary">Back to Asset List</a>
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAssetModal">Delete Asset</button>
+    </div>
+
+    <!-- Delete Asset Modal -->
+    <div class="modal fade" id="deleteAssetModal" tabindex="-1" aria-labelledby="deleteAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAssetModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the asset "{{ asset.name }}"?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{% url 'asset_delete' asset.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

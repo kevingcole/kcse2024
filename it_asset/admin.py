@@ -3,8 +3,12 @@
 from django.contrib import admin
 from .models import ITAsset, Manufacturer, Employee
 
-# Register models with the admin site
-admin.site.register(ITAsset)
+@admin.register(ITAsset)
+class ITAssetAdmin(admin.ModelAdmin):
+    list_display = ['name', 'serial_number', 'manufacturer', 'assigned_to']
+    search_fields = ['name', 'serial_number']
+    list_filter = ['manufacturer', 'assigned_to']
+
 admin.site.register(Manufacturer)
 admin.site.register(Employee)
 

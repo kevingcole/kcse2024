@@ -1,47 +1,13 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Profile
-from .forms import ProfileForm
-
-@login_required
-def profile_edit(request):
-    try:
-        profile = request.user.profile
-    except Profile.DoesNotExist:
-        profile = Profile(user=request.user)
-
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('user_profile')
-    else:
-        form = ProfileForm(instance=profile)
-
-    return render(request, 'profile/profile_edit.html', {'form': form})
-
-from django.shortcuts import render
-from .models import ITAsset, Manufacturer, Employee
-
-def asset_list(request):
-    assets = ITAsset.objects.all()
-    manufacturers = Manufacturer.objects.all()
-    employees = Employee.objects.all()
-    context = {
-        'page_obj': assets,
-        'manufacturers': manufacturers,
-        'employees': employees,
-    }
-    return render(request, 'assets/asset_list.html', context)
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
-from .models import ITAsset, Manufacturer, Employee
-from .forms import ITAssetForm, RegistrationForm, ProfileForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import login, logout
+from django.http import HttpResponse
+from .models import ITAsset, Manufacturer, Employee, Profile
+from .forms import ITAssetForm, RegistrationForm, ProfileForm, AssetForm
 
 # Registration View
 def register(request):
@@ -81,14 +47,13 @@ def asset_list(request):
 @login_required
 def add_asset(request):
     if request.method == 'POST':
-        form = ITAssetForm(request.POST)
+        form = AssetForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Asset created successfully!")
             return redirect('asset_list')
     else:
-        form = ITAssetForm()
-
+        form = AssetForm()
     return render(request, 'assets/add_asset.html', {'form': form})
 
 # Asset Detail View
@@ -108,8 +73,8 @@ def asset_detail(request, pk):
 
 # User Profile View
 @login_required
-def user_profile_view(request):
-    return render(request, 'profile/user_profile.html', {'user': request.user})
+def user_profile(request):
+    return render(request, 'it_asset/profile.html')
 
 # Home View
 @login_required
@@ -152,11 +117,11 @@ def profile_edit(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('user_profile')
+            return redirect('profile')
     else:
         form = ProfileForm(instance=profile)
 
-    return render(request, 'profile/profile_edit.html', {'form': form})
+    return render(request, 'it_asset/profile_edit.html', {'form': form})
 
 # Change Password View
 @login_required
@@ -198,6 +163,13 @@ def asset_delete(request, pk):
         return redirect('asset_list')
     return render(request, 'assets/asset_delete.html', {'asset': asset})
 
+# Logout View
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('home')
+    return render(request, 'it_asset/logout.html')
+
 @login_required
-def user_profile(request):
-    return render(request, 'it_asset/user_profile.html')
+def profile(request):
+    return render(request, 'it_asset/profile.html')

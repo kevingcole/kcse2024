@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-4">
+                    <h1 class="display-5 text-danger">You have been logged out</h1>
+                    <p class="lead text-muted">
+                        Thank you for using the Team IT Asset System.
+                    </p>
+                    <a href="{% url 'home' %}" class="btn btn-outline-primary mt-3">Return to Home</a>
+                    
+                    <form method="post" action="{% url 'logout' %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

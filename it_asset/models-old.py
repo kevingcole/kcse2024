@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 User = get_user_model()
 
@@ -86,11 +87,6 @@ class ITAsset(models.Model):
     serial_number = models.CharField(max_length=100, unique=True)
     manufacturer = models.ForeignKey('Manufacturer', on_delete=models.SET_NULL, null=True, blank=True)
     purchase_date = models.DateField(validators=[validate_purchase_date])
-    from django.conf import settings
-from django.db import models
-
-class ITAsset(models.Model):
-    # other fields
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

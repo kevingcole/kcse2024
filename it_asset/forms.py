@@ -1,5 +1,5 @@
 from django import forms
-from .models import ITAsset, Manufacturer, Employee, Profile
+from .models import ITAsset, Manufacturer, Employee, Profile, Asset
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
@@ -17,36 +17,16 @@ class BaseForm(forms.ModelForm):
 # Get the custom user model
 CustomUser = get_user_model()
 
-class ITAssetForm(BaseForm):
-    assigned_to = forms.ModelChoiceField(queryset=Employee.objects.all(), required=False, label="Assigned To")
-
+class ITAssetForm(forms.ModelForm):
     class Meta:
         model = ITAsset
-        fields = ['name', 'serial_number', 'purchase_date', 'manufacturer', 'assigned_to', 'description', 'warranty_expiry']
-        widgets = {
-            'purchase_date': forms.DateInput(attrs={'type': 'date'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Make sure the queryset for 'assigned_to' is set correctly
-        self.fields['manufacturer'].queryset = Manufacturer.objects.all()
-        self.fields['assigned_to'].queryset = Employee.objects.all()  # Populate with employees
-
-        # Debugging: Check the queryset
-        print("Assigned To queryset:", self.fields['assigned_to'].queryset)
-
-    def clean_serial_number(self):
-        serial_number = self.cleaned_data.get("serial_number")
-        if ITAsset.objects.filter(serial_number=serial_number).exists():
-            raise forms.ValidationError("This serial number is already in use.")
-        return serial_number
+        fields = ['name', 'serial_number', 'manufacturer', 'assigned_to']
 
 # Profile form
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'location']
+        fields = ['phone_number', 'first_name', 'last_name', 'address']
 
 # Custom user creation form
 class CustomUserCreationForm(UserCreationForm):
@@ -90,3 +70,8 @@ class EmployeeForm(BaseForm):
     class Meta:
         model = Employee
         fields = ['user', 'department', 'position']
+
+class AssetForm(forms.ModelForm):
+    class Meta:
+        model = ITAsset
+        fields = ['name', 'serial_number', 'manufacturer', 'assigned_to']

@@ -3,13 +3,34 @@
 {% block title %}Asset Detail{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Asset Detail</h1>
-    <p><strong>ID:</strong> {{ asset.id }}</p>
-    <p><strong>Name:</strong> {{ asset.name }}</p>
-    <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
-    <p><strong>Manufacturer:</strong> {{ asset.manufacturer.name }}</p>
-    <p><strong>Assigned To:</strong> {{ asset.assigned_to }}</p>
-    <!-- Add more fields as needed -->
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Asset Detail</h1>
+
+    <table class="table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th scope="row">ID:</th>
+                <td>{{ asset.id }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Name:</th>
+                <td>{{ asset.name }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Serial Number:</th>
+                <td>{{ asset.serial_number }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Manufacturer:</th>
+                <td>{{ asset.manufacturer.name }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Assigned To:</th>
+                <td>{{ asset.assigned_to }}</td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+
 </div>
 {% endblock %}

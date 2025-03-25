@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Asset List{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <h2>IT Assets</h2>
@@ -22,6 +24,7 @@
                 <th>Serial Number</th>
                 <th>Manufacturer</th>
                 <th>Assigned To</th>
+                <th>Details</th>
             </tr>
         </thead>
         <tbody>
@@ -32,10 +35,11 @@
                 <td>{{ asset.serial_number }}</td>
                 <td>{{ asset.manufacturer.name }}</td>
                 <td>{{ asset.assigned_to.user.get_full_name }}</td>
+                <td><a href="{% url 'asset_detail' asset.id %}">Details</a></td> <!-- Updated line -->
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No assets available.</td>
+                <td colspan="6">No assets available.</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -88,6 +88,6 @@ License
 
 Contact
 
-For any questions or inquiries, please contact Kevin Cole at kevingcole@example.com.
+For any questions or enquiries, please contact Kevin Cole at kev@kevcoleit.co.uk
 
 

@@ -35,7 +35,7 @@
                 <td>{{ asset.serial_number }}</td>
                 <td>{{ asset.manufacturer.name }}</td>
                 <td>{{ asset.assigned_to.user.get_full_name }}</td>
-                <td><a href="{% url 'asset_detail' asset.id %}">Details</a></td> <!-- Updated line -->
+                <td><a href="{% url 'asset_detail' asset.id %}"><i class="fas fa-search"></i></a></td>
             </tr>
             {% empty %}
             <tr>
@@ -54,7 +54,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST">
+                    <form method="POST" action="{% url 'add_asset' %}">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="id_name" class="form-label">Asset Name</label>

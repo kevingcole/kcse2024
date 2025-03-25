@@ -6,7 +6,6 @@ from django.dispatch import receiver
 # Manufacturer Model
 class Manufacturer(models.Model):
     name = models.CharField(max_length=100)
-    website = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -14,11 +13,14 @@ class Manufacturer(models.Model):
 # Employee Model
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    department = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15, default='N/A')
+    address = models.CharField(max_length=255, default='N/A')
+
+    def get_full_name(self):
+        return f"{self.user.first_name} {self.user.last_name}"
 
     def __str__(self):
-        return self.user.get_full_name()
+        return self.get_full_name()
 
 # IT Asset Model
 class ITAsset(models.Model):
@@ -51,9 +53,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-class Asset(models.Model):
-    # Define your fields here
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    # ...other fields...

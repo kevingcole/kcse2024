@@ -1,5 +1,5 @@
 from django import forms
-from .models import ITAsset, Manufacturer, Employee, Profile, Asset
+from .models import ITAsset, Manufacturer, Employee, Profile
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
@@ -26,7 +26,7 @@ class ITAssetForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['phone_number', 'first_name', 'last_name', 'address']
+        fields = ['bio', 'location', 'phone_number', 'first_name', 'last_name', 'address']
 
 # Custom user creation form
 class CustomUserCreationForm(UserCreationForm):
@@ -60,16 +60,16 @@ class RegistrationForm(forms.ModelForm):
         return cleaned_data
 
 # Manufacturer form
-class ManufacturerForm(BaseForm):
+class ManufacturerForm(forms.ModelForm):
     class Meta:
         model = Manufacturer
-        fields = ['name', 'website']
+        fields = ['name']
 
 # Employee form
-class EmployeeForm(BaseForm):
+class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
-        fields = ['user', 'department', 'position']
+        fields = ['user', 'phone_number', 'address']
 
 class AssetForm(forms.ModelForm):
     class Meta:

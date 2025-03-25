@@ -27,7 +27,7 @@ def register(request):
 # Asset List View with Pagination
 @login_required
 def asset_list(request):
-    assets = ITAsset.objects.all()
+    assets = ITAsset.objects.all().order_by('id')
     paginator = Paginator(assets, 10)  # Show 10 assets per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -47,29 +47,27 @@ def asset_list(request):
 @login_required
 def add_asset(request):
     if request.method == 'POST':
+        print("Form submitted")
         form = AssetForm(request.POST)
         if form.is_valid():
+            print("Form is valid")
             form.save()
             messages.success(request, "Asset created successfully!")
             return redirect('asset_list')
+        else:
+            print("Form is not valid")
+            print("Form errors:", form.errors)  # Print form errors to the console for debugging
+            print("Form data:", form.cleaned_data)  # Print form data to the console for debugging
+            messages.error(request, "Error creating asset. Please check the form for errors.")
     else:
         form = AssetForm()
     return render(request, 'assets/add_asset.html', {'form': form})
 
 # Asset Detail View
 @login_required
-def asset_detail(request, pk):
-    asset = get_object_or_404(ITAsset, pk=pk)
-    manufacturers = Manufacturer.objects.all()
-    employees = Employee.objects.all()
-
-    context = {
-        'asset': asset,
-        'manufacturers': manufacturers,
-        'employees': employees,
-    }
-
-    return render(request, 'assets/asset_detail.html', context)
+def asset_detail(request, id):
+    asset = get_object_or_404(ITAsset, id=id)
+    return render(request, 'assets/asset_detail.html', {'asset': asset})
 
 # User Profile View
 @login_required

@@ -65,6 +65,29 @@
         {% endif %}
     </div>
 
+    {% block extra_js %}
+    <script>
+        // JavaScript to fetch contact page and insert into modal body
+        document.getElementById("contactLink").addEventListener("click", function() {
+            fetch("{% url 'contact' %}")  // Correctly resolves to the contact URL
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // Insert the content of contact.html into the modal body
+                    document.getElementById("contactModalBody").innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error loading contact page:', error);
+                    document.getElementById("contactModalBody").innerHTML = "<p>Error loading the contact form. Please try again later.</p>";
+                });
+        });
+    </script>
+    {% endblock %}
+
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 fixed-bottom">
         <div class="container d-flex justify-content-between small">

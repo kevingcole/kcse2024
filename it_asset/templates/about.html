@@ -4,29 +4,87 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-4">
-                    <h1 class="text-center mb-4">About Us</h1>
-                    <p class="lead text-center">
-                        Welcome to our platform! We are dedicated to providing top-notch services and ensuring customer satisfaction.
-                    </p>
-                    <hr>
-                    <p>
-                        This is the about page where you can provide detailed information about your website, company, or team. 
-                        Feel free to add more sections and content to make this page more engaging and informative.
-                    </p>
-                    <p>
-                        Our goal is to enhance user experience and deliver quality services. Stay connected with us for updates and new features!
-                    </p>
-                    <hr>
-                    <p class="text-center">
-                        <a href="javascript:history.back()" class="btn btn-link text-decoration-none">Back</a>
-                    </p>
+    <!-- Header Section -->
+    <h1 class="text-center mb-4">About Us</h1>
+
+    <!-- About Us Card Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Welcome to the Team IT Asset Management System</h5>
+            <p class="card-text">I am committed to delivering exceptional services and ensuring customer satisfaction. My objective is to improve user experience and provide high-quality services. We encourage you to stay connected with us for updates and new features.</p>
+        </div>
+    </div>
+
+    <!-- Objective and Contact Card Section -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Our Objective</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">We aim to improve the user experience through continuous development and improvements in the IT Asset Management System. Our goal is to offer high-quality services, keeping customer needs at the forefront.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Get in Touch</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">If you would like to reach out to us, feel free to visit the <a href="#" id="contactLink" data-bs-toggle="modal" data-bs-target="#contactModal">contact</a> page. We're happy to assist you with any inquiries or support requests.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Footer Section -->
+    <div class="text-center">
+        <a href="javascript:history.back()" class="btn btn-link text-decoration-none">Back</a>
+    </div>
 </div>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Contact Us</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="contactModalBody">
+                <!-- Content of contact.html will be loaded here via AJAX -->
+                <p>Loading...</p> <!-- Default loading text, in case there's an issue -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // When the contact link is clicked, load the contact.html into the modal body
+    document.getElementById("contactLink").addEventListener("click", function() {
+        fetch("{% url 'contact' %}")  // This URL must match the path defined in urls.py
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Insert the content of contact.html into the modal body
+                document.getElementById("contactModalBody").innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error loading contact page:', error);
+                document.getElementById("contactModalBody").innerHTML = "<p>Error loading the contact form. Please try again later.</p>";
+            });
+    });
+</script>
 {% endblock %}

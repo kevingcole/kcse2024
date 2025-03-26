@@ -31,7 +31,7 @@ def register(request):
 @login_required
 def asset_list(request):
     assets = ITAsset.objects.all().order_by('id')
-    paginator = Paginator(assets, 10)  # Show 10 assets per page
+    paginator = Paginator(assets, 8)  # Show 10 assets per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

@@ -3,11 +3,107 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-<p>Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h2 class="display-5 text-center mb-4">Login</h2>
+
+                    <form method="post" id="loginForm">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="id_username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="id_password" name="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <p class="text-center mt-3">
+                        Don't have an account? 
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Create one</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_reg_username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="id_reg_username" name="username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_reg_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="id_reg_email" name="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_reg_password1" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="id_reg_password1" name="password1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_reg_password2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="id_reg_password2" name="password2" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AJAX Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+        fetch("{% url 'ajax_register' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                let registerModal = new bootstrap.Modal(document.getElementById("registerModal"));
+                registerModal.hide();
+
+                // Redirect or update UI
+                window.location.href = "{% url 'asset_list' %}"; // Change 'dashboard' to your desired page
+            } else {
+                alert("Registration failed: " + data.error);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});
+</script>
 {% endblock %}

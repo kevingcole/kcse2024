@@ -26,7 +26,7 @@ class ITAssetForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'location', 'phone_number', 'first_name', 'last_name', 'address']
+        fields = ['first_name', 'last_name', 'location', 'phone_number']  # Include all editable fields
 
 # Custom user creation form
 class CustomUserCreationForm(UserCreationForm):

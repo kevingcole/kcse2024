@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">{{ user.username }}'s Profile</h2>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>First Name</th>
+            <td>{{ profile.first_name }}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{ profile.last_name }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>{{ profile.location }}</td>
+        </tr>
+        <tr>
+            <th>Phone Number</th>
+            <td>{{ profile.phone_number }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'profile_edit' %}" class="btn btn-primary mt-3">Edit Profile</a>
+</div>
+{% endblock %}

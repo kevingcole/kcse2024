@@ -15,12 +15,15 @@ class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, default='N/A')
     address = models.CharField(max_length=255, default='N/A')
+    position = models.CharField(max_length=100, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    hire_date = models.DateField(blank=True, null=True)
 
     def get_full_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
     def __str__(self):
-        return self.get_full_name()
+        return self.user.username
 
 # IT Asset Model
 class ITAsset(models.Model):
@@ -51,3 +54,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+# Signal to create an Employee record when a User is created
+@receiver(post_save, sender=User)
+def create_employee(sender, instance, created, **kwargs):
+    if created:
+        Employee.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_employee(sender, instance, **kwargs):
+    instance.employee.save()

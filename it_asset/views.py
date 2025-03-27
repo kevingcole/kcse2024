@@ -11,21 +11,44 @@ from .forms import ITAssetForm, RegistrationForm, ProfileForm, AssetForm, Manufa
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.conf import settings
+from it_asset.models import ITAsset
+import sys
+import io
 
 # Registration View
 def register(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
+            # Save user without committing to DB yet
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data["password"])
+            user.set_password(form.cleaned_data['password'])
             user.save()
-            login(request, user)
-            messages.success(request, "Registration successful! You are now logged in.")
-            return redirect("home")
+
+            # Set the first name and last name manually if they're included in the form
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+
+            # Create an Employee record (can include defaults for other fields)
+            Employee.objects.create(
+                user=user,
+                phone_number="N/A",  # Default value
+                address="N/A",  # Default value
+                position="New Hire",  # Default value
+                department="Unassigned"  # Default value
+            )
+
+            messages.success(request, "Your account has been created successfully!")
+            return redirect('login')
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = RegistrationForm()
-    return render(request, "registration/register.html", {"form": form})
+    return render(request, 'registration/register.html', {'form': form})
 
 # Asset List View with Pagination
 @login_required
@@ -139,19 +162,30 @@ def change_password(request):
     return render(request, 'registration/change_password.html', {'form': form})
 
 # Asset Update View
-@login_required
-def asset_update(request, pk):
-    asset = get_object_or_404(ITAsset, pk=pk)
-    if request.method == 'POST':
-        form = ITAssetForm(request.POST, instance=asset)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Asset updated successfully!")
-            return redirect('asset_list')
-    else:
-        form = ITAssetForm(instance=asset)
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import ITAsset, Manufacturer, Employee
+from django.contrib import messages
 
-    return render(request, 'assets/asset_update.html', {'form': form})
+@login_required
+def asset_update(request, id):
+    asset = get_object_or_404(ITAsset, id=id)
+    manufacturers = Manufacturer.objects.all()  # Fetch all manufacturers
+    employees = Employee.objects.all()  # Fetch all employees
+
+    if request.method == 'POST':
+        asset.name = request.POST.get('name')
+        asset.serial_number = request.POST.get('serial_number')
+        asset.manufacturer_id = request.POST.get('manufacturer')
+        asset.assigned_to_id = request.POST.get('assigned_to')
+        asset.save()
+        messages.success(request, "Asset updated successfully!")
+        return redirect('asset_detail', id=asset.id)
+
+    return render(request, 'assets/asset_update.html', {
+        'asset': asset,
+        'manufacturers': manufacturers,
+        'employees': employees,
+    })
 
 # Asset Delete View
 @login_required
@@ -177,19 +211,17 @@ def profile(request):
 @login_required
 def add_manufacturer(request):
     if request.method == 'POST':
-        form = ManufacturerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Manufacturer created successfully!")
+        name = request.POST.get('name')
+        website = request.POST.get('website')  # Get the website field from the form
+        if name:
+            Manufacturer.objects.create(name=name, website=website)  # Save the website field
+            messages.success(request, "Manufacturer added successfully!")
             return redirect('asset_list')
         else:
-            messages.error(request, "Error creating manufacturer. Please check the form for errors.")
-    else:
-        form = ManufacturerForm()
-    return render(request, 'assets/add_manufacturer.html', {'form': form})
+            messages.error(request, "Name is required.")
+    return render(request, 'assets/add_manufacturer.html')
 
 # AJAX Register View
-
 @csrf_exempt
 def ajax_register(request):
     if request.method == "POST":
@@ -197,6 +229,8 @@ def ajax_register(request):
         email = request.POST.get("email")
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
 
         if password1 != password2:
             return JsonResponse({"success": False, "error": "Passwords do not match."})
@@ -205,6 +239,8 @@ def ajax_register(request):
             return JsonResponse({"success": False, "error": "Username already taken."})
 
         user = User.objects.create_user(username=username, email=email, password=password1)
+        user.first_name = first_name
+        user.last_name = last_name
         user.save()
 
         # Log in the user immediately after registering
@@ -214,3 +250,42 @@ def ajax_register(request):
             return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "Invalid request."})
+
+""" from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings """
+
+def contact(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        full_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+
+        # Capture email output if using the console backend
+        email_output = io.StringIO()
+        sys.stdout = email_output  # Redirect console output
+
+        try:
+            send_mail(
+                subject,
+                full_message,
+                settings.DEFAULT_FROM_EMAIL,
+                ['your-email@example.com'],  # Replace with your email
+                fail_silently=False,
+            )
+            sys.stdout = sys.__stdout__  # Reset console output
+            email_sent_message = email_output.getvalue()
+
+            messages.success(request, f"Your message has been sent successfully! 📩\n\nConsole Output:\n{email_sent_message}")
+
+        except Exception as e:
+            sys.stdout = sys.__stdout__  # Reset console output
+            messages.error(request, f"Error sending message: {e}")
+
+        return redirect("contact")
+
+    return render(request, "contact.html")

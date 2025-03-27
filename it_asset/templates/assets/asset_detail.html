@@ -29,7 +29,10 @@
     </table>
     <div class="d-flex justify-content-between">
         <a href="{% url 'asset_list' %}" class="btn btn-secondary">Back to Asset List</a>
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAssetModal">Delete Asset</button>
+        <div class="d-flex gap-2">
+            <a href="{% url 'asset_update' asset.id %}" class="btn btn-primary">Edit Asset</a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAssetModal">Delete Asset</button>
+        </div>
     </div>
 
     <!-- Delete Asset Modal -->

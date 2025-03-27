@@ -10,7 +10,7 @@
         <div class="form-row">
             <div class="col-md-6">
                 <label for="{{ form.username.id_for_label }}">Username</label>
-                <input type="text" name="username" value="{{ form.username.value }}" class="form-control" id="{{ form.username.id_for_label }}">
+                <input type="text" name="username" value="{{ form.username.value }}" class="form-control w-100" id="{{ form.username.id_for_label }}">
                 {% if form.username.errors %}
                     <div class="invalid-feedback">
                         {% for error in form.username.errors %}
@@ -22,7 +22,7 @@
 
             <div class="col-md-6">
                 <label for="{{ form.email.id_for_label }}">Email Address</label>
-                <input type="email" name="email" value="{{ form.email.value }}" class="form-control" id="{{ form.email.id_for_label }}">
+                <input type="email" name="email" value="{{ form.email.value }}" class="form-control w-100" id="{{ form.email.id_for_label }}">
                 {% if form.email.errors %}
                     <div class="invalid-feedback">
                         {% for error in form.email.errors %}
@@ -35,8 +35,34 @@
 
         <div class="form-row">
             <div class="col-md-6">
+                <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                <input type="text" name="first_name" value="{{ form.first_name.value }}" class="form-control w-100" id="{{ form.first_name.id_for_label }}">
+                {% if form.first_name.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.first_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6">
+                <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                <input type="text" name="last_name" value="{{ form.last_name.value }}" class="form-control w-100" id="{{ form.last_name.id_for_label }}">
+                {% if form.last_name.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.last_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-6">
                 <label for="{{ form.password.id_for_label }}">Password</label>
-                <input type="password" name="password" class="form-control" id="{{ form.password.id_for_label }}">
+                <input type="password" name="password" class="form-control w-100" id="{{ form.password.id_for_label }}">
                 {% if form.password.errors %}
                     <div class="invalid-feedback">
                         {% for error in form.password.errors %}
@@ -48,7 +74,7 @@
 
             <div class="col-md-6">
                 <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-                <input type="password" name="password2" class="form-control" id="{{ form.password2.id_for_label }}">
+                <input type="password" name="password2" class="form-control w-100" id="{{ form.password2.id_for_label }}">
                 {% if form.password2.errors %}
                     <div class="invalid-feedback">
                         {% for error in form.password2.errors %}

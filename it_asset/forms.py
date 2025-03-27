@@ -2,6 +2,7 @@ from django import forms
 from .models import ITAsset, Manufacturer, Employee, Profile
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 # Base form to apply common logic to all forms
 class BaseForm(forms.ModelForm):
@@ -75,3 +76,18 @@ class AssetForm(forms.ModelForm):
     class Meta:
         model = ITAsset
         fields = ['name', 'serial_number', 'manufacturer', 'assigned_to']
+
+class RegisterForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+    def clean_password2(self):
+        password = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password2')
+        if password and password2 and password != password2:
+            raise forms.ValidationError("Passwords don't match.")
+        return password2

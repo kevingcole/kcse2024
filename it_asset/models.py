@@ -6,6 +6,7 @@ from django.dispatch import receiver
 # Manufacturer Model
 class Manufacturer(models.Model):
     name = models.CharField(max_length=100)
+    website = models.URLField(max_length=200, blank=True, null=True)  # New field for website
 
     def __str__(self):
         return self.name

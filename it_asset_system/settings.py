@@ -20,7 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOGOUT_REDIRECT_URL = '/'        # Redirects to login page after logout
 
 # Email settings
-MAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Change this to the below settings for production
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"    # Development email backend
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # Production email backend
 EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

@@ -38,7 +38,15 @@
                 <td>{{ asset.serial_number }}</td>
                 <td>{{ asset.manufacturer.name }}</td>
                 <td>{{ asset.assigned_to.user.get_full_name }}</td>
-                <td><a href="{% url 'asset_detail' asset.id %}" class="btn btn-sm btn-info">View</a></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <!-- View Button -->
+                        <a href="{% url 'asset_detail' asset.id %}" class="btn btn-primary btn-sm">View</a>
+                        
+                        <!-- Edit Button -->
+                        <a href="{% url 'asset_update' asset.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </div>
+                </td>
             </tr>
             {% empty %}
             <tr>
@@ -156,6 +164,8 @@
                         <div class="mb-3">
                             <label for="id_name" class="form-label">Manufacturer Name</label>
                             <input type="text" class="form-control" id="id_name" name="name" required>
+                            <label for="id_website" class="form-label">Website</label>
+                            <input type="url" class="form-control" id="id_website" name="website" placeholder="https://example.com">
                         </div>
                         <button type="submit" class="btn btn-primary">Add Manufacturer</button>
                     </form>
